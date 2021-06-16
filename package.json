@@ -7,6 +7,13 @@
 	"engines": {
 		"vscode": "^1.57.0"
 	},
+	"repository": {
+		"url": "https://github.com/yy0931/save-as-root",
+		"type": "git"
+	},
+	"bugs": {
+		"url": "https://github.com/yy0931/save-as-root/issues"
+	},
 	"categories": [
 		"Other"
 	],
