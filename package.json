@@ -1,0 +1,44 @@
+{
+	"name": "save-as-root",
+	"displayName": "Save As Root in Remote SSH",
+	"description": "",
+	"version": "1.0.0",
+	"publisher": "yy0931",
+	"engines": {
+		"vscode": "^1.57.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:save-as-root.saveFile"
+	],
+	"keywords": [
+		"remote",
+		"ssh",
+		"root",
+		"sudo"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "save-as-root.saveFile",
+				"title": "Save As Root"
+			}
+		]
+	},
+	"scripts": {
+		"test": "node ./test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.57.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0"
+	}
+}
