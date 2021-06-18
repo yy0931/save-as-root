@@ -7,8 +7,7 @@ is an easy solution to [FileSystemProvider: no way of handling permissions issue
 - Your environment must be configured for running the sudo command without a password.
 
 ## Usage
-1. Select `Save As Root` in the command palette.
-2. Select `Don't Save` in the VSCode's native `Do you want to save the changes ...` dialog.
+Select `Save As Root` in the command palette (F1 or Ctrl+Shift+P or Cmd+Shift+P).
 
 ## Contributing
 When you find and fix a bug/bugs, please send PRs to my repository.
