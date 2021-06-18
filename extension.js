@@ -28,7 +28,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         }
         try {
             // Save the file
-            execSync(`sudo tee <&0 "$fileName" > /dev/null`, { shell: "/bin/bash", input: editor.document.getText(), env: { fileName: filename } })
+            execSync(`sudo tee <&0 "$filename" > /dev/null`, { shell: "/bin/bash", input: editor.document.getText(), env: { filename } })
 
             // Reopen the file
             const column = editor.viewColumn
