@@ -17,11 +17,11 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         /** @type {string} */
         let filename
         if (editor.document.isUntitled) { // New file
-            const input = await vscode.window.showInputBox({ title: "New File", placeHolder: "/etc/nginx/nginx.conf" })
+            const input = await vscode.window.showSaveDialog({})
             if (input === undefined) {
                 return
             }
-            filename = input
+            filename = input.fsPath
             fs.mkdirSync(path.dirname(filename), { recursive: true })
         } else { // Save
             filename = editor.document.fileName
