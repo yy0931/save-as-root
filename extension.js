@@ -15,25 +15,25 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         }
 
         /** @type {string} */
-        let fileName
+        let filename
         if (editor.document.isUntitled) { // New file
             const input = await vscode.window.showInputBox({ title: "New File", placeHolder: "/etc/nginx/nginx.conf" })
             if (input === undefined) {
                 return
             }
-            fileName = input
-            fs.mkdirSync(path.dirname(fileName), { recursive: true })
+            filename = input
+            fs.mkdirSync(path.dirname(filename), { recursive: true })
         } else { // Save
-            fileName = editor.document.fileName
+            filename = editor.document.fileName
         }
         try {
             // Save the file
-            execSync(`sudo tee <&0 "$fileName" > /dev/null`, { shell: "/bin/bash", input: editor.document.getText(), env: { fileName } })
+            execSync(`sudo tee <&0 "$fileName" > /dev/null`, { shell: "/bin/bash", input: editor.document.getText(), env: { fileName: filename } })
 
             // Reopen the file
             const column = editor.viewColumn
             await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
-            await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(fileName), column)
+            await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
         } catch (err) {
             console.error(err)
             const message = /** @type {Error} */(err).message
