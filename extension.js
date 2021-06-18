@@ -1,5 +1,7 @@
 const vscode = require('vscode')
 const { execSync } = require('child_process')
+const fs = require("fs")
+const path = require("path")
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
     context.subscriptions.push(vscode.commands.registerCommand('save-as-root.saveFile', async () => {
@@ -20,6 +22,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 return
             }
             fileName = input
+            fs.mkdirSync(path.dirname(fileName), { recursive: true })
         } else { // Save
             fileName = editor.document.fileName
         }
