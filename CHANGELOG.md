@@ -1,3 +1,6 @@
+1.1.1
+- Fix: When saving files VSCode tries to open backed up data and throws error
+
 1.1.0
 - Fix: Error when creating a file in a non-existent directory 
 - Added an icon

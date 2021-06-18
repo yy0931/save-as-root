@@ -33,7 +33,12 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             // Reopen the file
             const column = editor.viewColumn
             await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
-            await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
+            try {
+                await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
+            } catch (err) {
+                // Try twice because VSCode tries to open backed up data and throws error.
+                await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
+            }
         } catch (err) {
             console.error(err)
             const message = /** @type {Error} */(err).message
