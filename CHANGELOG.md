@@ -1,3 +1,6 @@
+1.2.0
+- Use `File: Revert File` instead of reopening files so that the native save dialog is not displayed
+
 1.1.1
 - Fix: When saving files VSCode tries to open backed up data and throws error
 
