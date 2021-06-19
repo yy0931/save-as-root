@@ -1,8 +1,8 @@
 {
 	"name": "save-as-root",
 	"displayName": "Save as Root in Remote SSH",
-	"description": "",
-	"version": "1.2.0",
+	"description": "Edit configuration files with root privileges while using the Remote - SSH extension",
+	"version": "1.2.1",
 	"publisher": "yy0931",
 	"engines": {
 		"vscode": "^1.57.0"
