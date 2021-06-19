@@ -29,7 +29,6 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 const filename = input.fsPath
 
                 // Create a file and write the editor content to it
-                fs.mkdirSync(path.dirname(filename), { recursive: true })  // FIXME: Use sudo if permission error occurs
                 sudoWriteFileSync(filename, editor.document.getText())
 
                 const column = editor.viewColumn
