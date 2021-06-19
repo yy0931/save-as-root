@@ -9,7 +9,7 @@ const os = require("os")
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo bash -p 'password:'`
-        // 2. Call `echo file contents:` to inform this extension that the authentication was successful
+        // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `tee <&0 "$filename"`
         const p = exec(`sudo -S -p 'password:' --preserve-env=filename bash -c 'echo "file contents:" >&2; tee <&0 "$filename" > /dev/null'`, { shell: "/bin/bash", env: { filename } })
         const cancel = (/** @type {Error | null} */err = null) => {
