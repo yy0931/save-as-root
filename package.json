@@ -1,6 +1,6 @@
 {
 	"name": "save-as-root",
-	"displayName": "Save As Root in Remote SSH",
+	"displayName": "Save as Root in Remote SSH",
 	"description": "",
 	"version": "1.2.0",
 	"publisher": "yy0931",
@@ -32,7 +32,7 @@
 		"commands": [
 			{
 				"command": "save-as-root.saveFile",
-				"title": "Save As Root"
+				"title": "Save as Root"
 			}
 		]
 	},
