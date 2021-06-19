@@ -1,10 +1,70 @@
 const vscode = require('vscode')
-const { execSync } = require('child_process')
-const fs = require("fs")
-const path = require("path")
+const { exec } = require('child_process')
+const os = require("os")
 
-const sudoWriteFileSync = (/** @type {string} */filename, /** @type {string} */content) => {
-    execSync(`sudo tee <&0 "$filename" > /dev/null`, { shell: "/bin/bash", input: content, env: { filename } })
+/**
+ * @returns {Promise<void>}
+ * @throws {Error | null}
+ */
+const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+    return new Promise((resolve, reject) => {
+        // 1. Authenticate with `sudo bash -p 'password:'`
+        // 2. Call `echo file contents:` to inform this extension that the authentication was successful
+        // 3. Write the file contents with `tee <&0 "$filename"`
+        const p = exec(`sudo -S -p 'password:' --preserve-env=filename bash -c 'echo "file contents:" >&2; tee <&0 "$filename" > /dev/null'`, { shell: "/bin/bash", env: { filename } })
+        const cancel = (/** @type {Error | null} */err = null) => {
+            if (!p.killed) { p.kill() }
+            reject(err)
+        }
+
+        // Set a timeout because the script may wait forever for stdin on error.
+        /** @type {NodeJS.Timeout | null} */
+        let timer = null
+        const startTimer = () => {
+            timer = setTimeout(() => {
+                if (p.exitCode === null) {
+                    cancel(new Error(`Timeout: ${stderr}`))
+                }
+            }, 100000)
+        }
+        const stopTimer = () => {
+            if (timer !== null) { clearTimeout(timer) }
+            timer = null
+        }
+        startTimer()
+
+        // Handle stderr
+        let stderr = ''
+        p.stderr?.on("data", (/** @type {Buffer | string} */chunk) => {
+            const lines = chunk.toString().split("\n").map((line) => line.trim())
+            if (lines.includes("password:")) {
+                // password prompt
+                stopTimer()
+                vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "" }).then((password) => {
+                    if (password === undefined) { return cancel() }
+                    startTimer()
+                    p.stdin?.write(`${password}\n`)
+                }, cancel)
+                stderr = ""
+            } else if (lines.includes("file contents:")) {
+                // authentication succeeded
+                p.stdin?.write(content)
+                p.stdin?.end()
+            } else {
+                // error message
+                stderr += chunk.toString()
+            }
+        })
+
+        // Exit
+        p.on("exit", (code) => {
+            if (code === 0) {
+                return resolve()
+            } else {
+                reject(new Error(`exit code ${code}: ${stderr}`))
+            }
+        })
+    })
 }
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
@@ -29,7 +89,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 const filename = input.fsPath
 
                 // Create a file and write the editor content to it
-                sudoWriteFileSync(filename, editor.document.getText())
+                await sudoWriteFile(filename, editor.document.getText())
 
                 const column = editor.viewColumn
 
@@ -43,20 +103,24 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
             } else {
                 // write the editor content to the file
-                sudoWriteFileSync(editor.document.fileName, editor.document.getText())
+                await sudoWriteFile(editor.document.fileName, editor.document.getText())
 
-                // Reload the file content from the file system
+                // Reload the file contents from the file system
                 await vscode.commands.executeCommand("workbench.action.files.revert")
             }
         } catch (err) {
+            if (err === null) {
+                console.log("canceled")
+                return
+            }
             // Handle errors
             console.error(err)
             const message = /** @type {Error} */(err).message
             if (message.includes("a terminal is required to read the password")) {
-                await vscode.window.showErrorMessage("Could not run sudo command without password.")
+                await vscode.window.showErrorMessage("[Save as Root] Could not run sudo command without password.")
                 return
             }
-            await vscode.window.showErrorMessage(message)
+            await vscode.window.showErrorMessage(`[Save as Root] ${message}`)
         }
     }))
 }
