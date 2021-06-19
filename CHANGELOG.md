@@ -1,3 +1,6 @@
+1.3.0
+- Implemented password input
+
 1.2.1
 - Edited the display name and the description
 
