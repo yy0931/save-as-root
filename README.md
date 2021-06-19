@@ -5,7 +5,7 @@ is an easy solution to [FileSystemProvider: no way of handling permissions issue
 ## Usage
 Select `Save as Root` in the command palette (F1 or Ctrl+Shift+P or Cmd+Shift+P).
 
-![Screenshot](https://raw.githubusercontent.com/yy0931/save-as-root/screenshot.gif)
+![Screenshot](https://raw.githubusercontent.com/yy0931/save-as-root/main/screenshot.gif)
 
 ## Limitations
 - \*nix remote environments only.
