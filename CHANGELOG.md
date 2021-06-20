@@ -1,3 +1,7 @@
+1.3.1
+- Replaced exec() with spawn()
+- Edited the display name
+
 1.3.0
 - Implemented password input
 
