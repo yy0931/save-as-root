@@ -93,16 +93,16 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
 
                 const column = editor.viewColumn
 
-                // Delete all so that the save dialog doesn't appear
+                // Clear the content of the editor so that the save dialog won't be displayed when executing `workbench.action.closeActiveEditor`.
                 await editor.edit((editBuilder) => editBuilder.delete(new vscode.Range(0, 0, editor.document.lineCount, 0)))
 
                 // Close the editor for the untitled file
                 await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
 
-                // open the newly created file
+                // Open the newly created file
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
             } else {
-                // write the editor content to the file
+                // Write the editor content to the file
                 await sudoWriteFile(editor.document.fileName, editor.document.getText())
 
                 // Reload the file contents from the file system
