@@ -109,18 +109,13 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 await vscode.commands.executeCommand("workbench.action.files.revert")
             }
         } catch (err) {
+            // Handle errors
             if (err === null) {
                 console.log("canceled")
                 return
             }
-            // Handle errors
             console.error(err)
-            const message = /** @type {Error} */(err).message
-            if (message.includes("a terminal is required to read the password")) {
-                await vscode.window.showErrorMessage("[Save as Root] Could not run sudo command without password.")
-                return
-            }
-            await vscode.window.showErrorMessage(`[Save as Root] ${message}`)
+            await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
         }
     }))
 }
