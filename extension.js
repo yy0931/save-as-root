@@ -35,10 +35,10 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 
         // Handle stderr
         let stderr = ''
-        p.stderr?.on("data", (/** @type {Buffer | string} */chunk) => {
+        p.stderr?.on("data", (/** @type {Buffer} */chunk) => {
             const lines = chunk.toString().split("\n").map((line) => line.trim())
             if (lines.includes("password:")) {
-                // password prompt
+                // Password prompt
                 stopTimer()
                 vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "" }).then((password) => {
                     if (password === undefined) { return cancel() }
@@ -47,11 +47,11 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
                 }, cancel)
                 stderr = ""
             } else if (lines.includes("file contents:")) {
-                // authentication succeeded
+                // Authentication succeeded
                 p.stdin?.write(content)
                 p.stdin?.end()
             } else {
-                // error message
+                // Error messages
                 stderr += chunk.toString()
             }
         })
