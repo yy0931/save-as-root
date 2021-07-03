@@ -1,3 +1,6 @@
+1.3.2
+- Added error handling code
+
 1.3.1
 - Replaced exec() with spawn()
 - Edited the display name
