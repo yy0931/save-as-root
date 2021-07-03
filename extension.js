@@ -12,6 +12,9 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
         const p = spawn(`sudo -S -p 'password:' --preserve-env=filename bash -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/bash", env: { filename } })
+        p.on("error", (ev) => {
+            reject(ev)
+        })
         const cancel = (/** @type {Error | null} */err = null) => {
             if (!p.killed) { p.kill() }
             reject(err)
