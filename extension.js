@@ -2,20 +2,17 @@ const vscode = require("vscode")
 const { spawn } = require("child_process")
 const os = require("os")
 
-/**
- * @returns {Promise<void>}
- * @throws {Error | null}
- */
- const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+/** @returns {Promise<void>} */
+const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo bash -p 'password:'`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
         const p = spawn(`sudo -S -p 'password:' --preserve-env=filename bash -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/bash", env: { filename } })
-        p.on("error", (ev) => {
-            reject(ev)
+        p.on("error", (err) => {
+            reject(err)
         })
-        const cancel = (/** @type {Error | null} */err = null) => {
+        const cancel = (/** @type {Error} */err) => {
             if (!p.killed) { p.kill() }
             reject(err)
         }
@@ -44,7 +41,7 @@ const os = require("os")
                 // Password prompt
                 stopTimer()
                 vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "" }).then((password) => {
-                    if (password === undefined) { return cancel() }
+                    if (password === undefined) { return cancel(new vscode.CancellationError()) }
                     startTimer()
                     p.stdin?.write(`${password}\n`)
                 }, cancel)
@@ -113,8 +110,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             }
         } catch (err) {
             // Handle errors
-            if (err === null) {
-                console.log("canceled")
+            if (err instanceof vscode.CancellationError) {
                 return
             }
             console.error(err)
