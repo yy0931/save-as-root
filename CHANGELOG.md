@@ -1,3 +1,6 @@
+1.3.3
+- Deleted unused files and made the code more readable. There is no change in behavior.
+
 1.3.2
 - Added error handling code
 
