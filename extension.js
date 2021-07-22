@@ -1,12 +1,12 @@
-const vscode = require('vscode')
-const { spawn } = require('child_process')
+const vscode = require("vscode")
+const { spawn } = require("child_process")
 const os = require("os")
 
 /**
  * @returns {Promise<void>}
  * @throws {Error | null}
  */
-const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo bash -p 'password:'`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
@@ -37,7 +37,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         startTimer()
 
         // Handle stderr
-        let stderr = ''
+        let stderr = ""
         p.stderr?.on("data", (/** @type {Buffer} */chunk) => {
             const lines = chunk.toString().split("\n").map((line) => line.trim())
             if (lines.includes("password:")) {
@@ -71,7 +71,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 }
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
-    context.subscriptions.push(vscode.commands.registerCommand('save-as-root.saveFile', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
         // Check the status of the editor
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
@@ -100,7 +100,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 await editor.edit((editBuilder) => editBuilder.delete(new vscode.Range(0, 0, editor.document.lineCount, 0)))
 
                 // Close the editor for the untitled file
-                await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
+                await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
 
                 // Open the newly created file
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
