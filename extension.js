@@ -17,7 +17,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
             reject(err)
         }
 
-        // Set a timeout because the script may wait forever for stdin on error.
+        // Set a timeout because the script may wait forever for stdin on error
         /** @type {NodeJS.Timeout | null} */
         let timer = null
         const startTimer = () => {
