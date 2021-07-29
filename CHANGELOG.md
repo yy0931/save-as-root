@@ -1,3 +1,6 @@
+1.3.4
+- Made tiny changes to comments and descriptions.
+
 1.3.3
 - Deleted unused files and made the code more readable. There is no change in behavior.
 
