@@ -35,5 +35,11 @@
 				"title": "Save as Root"
 			}
 		]
+	},
+	"capabilities": {
+		"virtualWorkspaces": false,
+		"untrustedWorkspaces": {
+			"supported": true
+		}
 	}
 }
