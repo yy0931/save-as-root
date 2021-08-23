@@ -1,3 +1,6 @@
+1.3.6
+- Fixed “sudo: option '--preserve-env' doesn't allow an argument #2”
+
 1.3.5
 - Added support for untrusted workspaces.
   This extension does nothing until you run the command, so it is safe to enable it in untrasted workspaces.
