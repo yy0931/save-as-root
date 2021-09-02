@@ -1,5 +1,8 @@
+1.3.7
+- Changed to use `/bin/sh` instead of `/bin/bash` to make it work on systems without bash #3
+
 1.3.6
-- Fixed “sudo: option '--preserve-env' doesn't allow an argument #2”
+- Fixed an error on systems using older versions of sudo #2
 
 1.3.5
 - Added support for untrusted workspaces.
