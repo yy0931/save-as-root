@@ -8,7 +8,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         // 1. Authenticate with `sudo -S -p 'password:' bash`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
-        const p = spawn(`sudo -S -p 'password:' "filename=$filename" bash -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/bash", env: { filename } })
+        const p = spawn(`sudo -S -p 'password:' "filename=$filename" bash -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/sh", env: { filename } })
         p.on("error", (err) => {
             reject(err)
         })
