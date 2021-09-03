@@ -5,10 +5,10 @@ const os = require("os")
 /** @returns {Promise<void>} */
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
     return new Promise((resolve, reject) => {
-        // 1. Authenticate with `sudo -S -p 'password:' bash`
+        // 1. Authenticate with `sudo -S -p 'password:' sh`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
-        const p = spawn(`sudo -S -p 'password:' "filename=$filename" bash -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/sh", env: { filename } })
+        const p = spawn(`sudo -S -p 'password:' "filename=$filename" sh -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/sh", env: { filename } })
         p.on("error", (err) => {
             reject(err)
         })
