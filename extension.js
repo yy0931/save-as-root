@@ -1,5 +1,5 @@
 const vscode = require("vscode")
-const { spawn } = require("child_process")
+const { execFile } = require("child_process")
 const os = require("os")
 
 /** @returns {Promise<void>} */
@@ -8,7 +8,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         // 1. Authenticate with `sudo -S -p 'password:' sh`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
-        const p = spawn(`sudo -S -p 'password:' "filename=$filename" sh -c 'echo "file contents:" >&2; cat <&0 > "$filename"'`, { shell: "/bin/sh", env: { filename } })
+        const p = execFile("sudo", ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
         p.on("error", (err) => {
             reject(err)
         })
@@ -35,7 +35,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 
         // Handle stderr
         let stderr = ""
-        p.stderr.on("data", (/** @type {Buffer} */chunk) => {
+        p.stderr?.on("data", (/** @type {Buffer} */chunk) => {
             const lines = chunk.toString().split("\n").map((line) => line.trim())
             if (lines.includes("password:")) {
                 // Password prompt
@@ -43,13 +43,13 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
                 vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "" }).then((password) => {
                     if (password === undefined) { return cancel(new vscode.CancellationError()) }
                     startTimer()
-                    p.stdin.write(`${password}\n`)
+                    p.stdin?.write(`${password}\n`)
                 }, cancel)
                 stderr = ""
             } else if (lines.includes("file contents:")) {
                 // Authentication succeeded
-                p.stdin.write(content)
-                p.stdin.end()
+                p.stdin?.write(content)
+                p.stdin?.end()
             } else {
                 // Error messages
                 stderr += chunk.toString()
