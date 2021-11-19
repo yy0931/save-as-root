@@ -1,3 +1,6 @@
+1.3.9
+- Run the sudo command without spawning a shell to prevent the password cache from being cleared
+
 1.3.7, 8
 - Changed to use `/bin/sh` instead of `/bin/bash` to make it work on systems without bash #3
 
