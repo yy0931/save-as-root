@@ -1,3 +1,6 @@
+1.4.0
+- Add `ignoreFocusOut: true` to showInputBox() #9
+
 1.3.9
 - Run the sudo command without spawning a shell to prevent the password cache from being cleared
 
