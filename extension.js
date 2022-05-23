@@ -40,7 +40,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
             if (lines.includes("password:")) {
                 // Password prompt
                 stopTimer()
-                vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "" }).then((password) => {
+                vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "", ignoreFocusOut: true }).then((password) => {
                     if (password === undefined) { return cancel(new vscode.CancellationError()) }
                     startTimer()
                     p.stdin?.write(`${password}\n`)
