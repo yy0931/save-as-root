@@ -2,7 +2,7 @@
 	"name": "save-as-root",
 	"displayName": "Save as Root in Remote - SSH",
 	"description": "Edit configuration files with root privileges during using the Remote - SSH extension",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"publisher": "yy0931",
 	"engines": {
 		"vscode": "^1.57.0"
@@ -19,6 +19,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onStartupFinished",
 		"onCommand:save-as-root.saveFile"
 	],
 	"keywords": [
@@ -33,6 +34,14 @@
 			{
 				"command": "save-as-root.saveFile",
 				"title": "Save as Root"
+			}
+		],
+		"keybindings": [
+			{
+				"key": "ctrl+s",
+				"mac": "cmd+s",
+				"command": "save-as-root.saveFile",
+				"when": "save-as-root.noWriteAccess"
 			}
 		]
 	},
