@@ -73,8 +73,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 }
 
 exports.activate = async (/** @type {vscode.ExtensionContext} */context) => {
-    // When the command "save-as-root.saveFile" is called, read the contents of the editor and save it to the file using the sudo command.
-    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
+    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile.noconfirm", async () => {
         // Check the status of the editor
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
@@ -143,6 +142,29 @@ exports.activate = async (/** @type {vscode.ExtensionContext} */context) => {
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async (e) => {
         await checkFilePermissionAndToggleCtrlSKeybinding(e)
     }))
+
+    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
+        if (await vscode.window.showInformationMessage("Use sudo?", "Yes", "No") === "Yes") {
+            await vscode.commands.executeCommand("save-as-root.saveFile.noconfirm")
+        }
+    }))
+
+    // Update "save-as-root.requiresSudo" context key
+    {
+        const update = async (/** @type {vscode.TextEditor | undefined} */e) => {
+            await vscode.commands.executeCommand("setContext", "save-as-root.requiresSudo",
+                process.platform !== "win32" &&
+                e?.document.uri.scheme === "file" &&
+                !await hasWritePermission(e.document.uri.fsPath))
+        }
+        await update(vscode.window.activeTextEditor)
+        context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async (e) => { await update(e) }))
+    }
 }
 
 exports.deactivate = () => { }
+
+const hasWritePermission = async (/** @type {string} */fsPath) => {
+    try { await fs.promises.access(fsPath, fs.constants.W_OK) } catch (/** @type {any} */err) { return !["EACCES", "EPERM"].includes(err.code) }
+    return true
+}

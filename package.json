@@ -32,18 +32,25 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "save-as-root.saveFile.noconfirm",
+				"title": "Save as Root"
+			},
+			{
 				"command": "save-as-root.saveFile",
 				"title": "Save as Root"
 			}
 		],
-		"keybindings": [
-			{
-				"key": "ctrl+s",
-				"mac": "cmd+s",
-				"command": "save-as-root.saveFile",
-				"when": "save-as-root.noWriteAccess"
-			}
-		]
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "save-as-root.saveFile.noconfirm"
+				},
+				{
+					"command": "save-as-root.saveFile",
+					"when": "false"
+				}
+			]
+		}
 	},
 	"capabilities": {
 		"virtualWorkspaces": false,
