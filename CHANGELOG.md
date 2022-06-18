@@ -1,3 +1,10 @@
+1.4.2
+- Fixed error handling
+
+1.4.1
+- Fixed memory leaks
+- Reduced timeout from 100s to 5s
+
 1.4.0
 - Add `ignoreFocusOut: true` to showInputBox() #9
 
