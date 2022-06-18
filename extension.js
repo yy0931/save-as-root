@@ -52,6 +52,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
                 // Authentication succeeded
                 p.stdin?.write(content)
                 p.stdin?.end()
+                stderr += lines.slice(lines.lastIndexOf("file contents:") + 1).join("\n")
             } else {
                 // Error messages
                 stderr += chunk.toString()
