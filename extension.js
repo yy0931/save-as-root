@@ -10,10 +10,12 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         // 3. Write the file contents with `cat <&0 > "$filename"`
         const p = execFile("sudo", ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
         p.on("error", (err) => {
+            stopTimer()
             reject(err)
         })
         const cancel = (/** @type {Error} */err) => {
             if (!p.killed) { p.kill() }
+            stopTimer()
             reject(err)
         }
 
@@ -58,6 +60,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 
         // Exit
         p.on("exit", (code) => {
+            stopTimer()
             if (code === 0) {
                 return resolve()
             } else {
