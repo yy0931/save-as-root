@@ -9,7 +9,7 @@ Select `Save as Root` in the command palette (F1 or Ctrl+Shift+P or Cmd+Shift+P)
 
 ---
 
-To override ctrl+S add the following code to shortcuts.json. (F1 or Ctrl+Shift+P or Cmd+Shift+P > `Preferences: Open Keyboard Shortcuts (JSON)`)
+To override ctrl+s add the following code to shortcuts.json. (F1 or Ctrl+Shift+P or Cmd+Shift+P > `Preferences: Open Keyboard Shortcuts (JSON)`)
 
 ```json
 {
