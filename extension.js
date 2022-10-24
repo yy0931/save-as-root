@@ -90,7 +90,19 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
 
                 // Reload the file contents from the file system
                 await vscode.commands.executeCommand("workbench.action.files.revert")
-            } else {
+            } else if (editor.document.uri.fsPath.startsWith("/")) {  // Untitled files with associated path (e.g. `code nonexistent.txt`)
+                // Write the editor content to the file
+                await sudoWriteFile(editor.document.fileName, editor.document.getText())
+
+                // Save the viewColumn property before closing the editor
+                const column = editor.viewColumn
+
+                // Reload the file contents from the file system
+                await vscode.commands.executeCommand("workbench.action.revertAndCloseActiveEditor")
+
+                // Open the newly created file
+                await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(editor.document.uri.fsPath), column)
+            } else { // Untitled files with a name such as "Untitled-1"
                 // Show the save dialog
                 const input = await vscode.window.showSaveDialog({})
                 if (input === undefined) {
