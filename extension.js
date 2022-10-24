@@ -97,7 +97,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 // Save the viewColumn property before closing the editor
                 const column = editor.viewColumn
 
-                // Reload the file contents from the file system
+                // Close the editor for the untitled file
                 await vscode.commands.executeCommand("workbench.action.revertAndCloseActiveEditor")
 
                 // Open the newly created file
