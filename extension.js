@@ -113,13 +113,11 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 // Create a file and write the editor content to it
                 await sudoWriteFile(filename, editor.document.getText())
 
+                // Save the viewColumn property before closing the editor
                 const column = editor.viewColumn
 
-                // Clear the content of the editor so that the save dialog won't be displayed when executing `workbench.action.closeActiveEditor`.
-                await editor.edit((editBuilder) => editBuilder.delete(new vscode.Range(0, 0, editor.document.lineCount, 0)))
-
                 // Close the editor for the untitled file
-                await vscode.commands.executeCommand("workbench.action.closeActiveEditor")
+                await vscode.commands.executeCommand("workbench.action.revertAndCloseActiveEditor")
 
                 // Open the newly created file
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
