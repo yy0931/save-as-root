@@ -84,7 +84,13 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         }
 
         try {
-            if (editor.document.isUntitled) {
+            if (!editor.document.isUntitled) {
+                // Write the editor content to the file
+                await sudoWriteFile(editor.document.fileName, editor.document.getText())
+
+                // Reload the file contents from the file system
+                await vscode.commands.executeCommand("workbench.action.files.revert")
+            } else {
                 // Show the save dialog
                 const input = await vscode.window.showSaveDialog({})
                 if (input === undefined) {
@@ -105,12 +111,6 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
 
                 // Open the newly created file
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
-            } else {
-                // Write the editor content to the file
-                await sudoWriteFile(editor.document.fileName, editor.document.getText())
-
-                // Reload the file contents from the file system
-                await vscode.commands.executeCommand("workbench.action.files.revert")
             }
         } catch (err) {
             // Handle errors
