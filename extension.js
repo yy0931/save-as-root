@@ -128,7 +128,12 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 return
             }
             console.error(err)
-            await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
+            if (err instanceof Error && "code" in err && "path" in err && err.code === "ENOENT" && err.path === "sudo") {
+                // #15
+                await vscode.window.showErrorMessage(`[Save as Root] The sudo command is not installed. Please install it with the package manager, e.g. \`apt-get install sudo\`.\nThe original error: ${err.message}`)
+                return
+            }
+            await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message} `)
         }
     }))
 }
