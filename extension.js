@@ -3,7 +3,7 @@ const { execFile } = require("child_process")
 const os = require("os")
 
 /** @returns {Promise<void>} */
-const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+const sudoWriteFile = async (/** @type {string} */filename, /** @type {string | Uint8Array} */content) => {
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo -S -p 'password:' sh`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
@@ -74,6 +74,20 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
     context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
         // Check the status of the editor
+        const notebook = vscode.window.activeNotebookEditor?.notebook
+        if (notebook !== undefined) {
+            if (notebook.isUntitled) { return }  // TODO
+            const data = /** @type {Uint8Array} */(await vscode.commands.executeCommand("vscode.executeNotebookToData", notebook.notebookType, new vscode.NotebookData(notebook.getCells().map((cell) => {
+                const cellData = new vscode.NotebookCellData(cell.kind, cell.document.getText(), cell.document.languageId)
+                cellData.executionSummary = cell.executionSummary
+                cellData.metadata = cell.metadata
+                cellData.outputs = [...cell.outputs]
+                return cellData
+            }))))
+            sudoWriteFile(notebook.uri.fsPath, data)
+            await vscode.commands.executeCommand("workbench.action.files.revert")
+            return
+        }
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
             return
