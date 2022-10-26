@@ -1,3 +1,6 @@
+1.5.0
+- Add support for untitled files with associated path
+
 1.4.2
 - Fixed error handling
 
