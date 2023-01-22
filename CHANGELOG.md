@@ -1,3 +1,7 @@
+1.5.1
+- Increase timeout #17
+- Display instructions when the sudo command is missing #15
+
 1.5.0
 - Add support for untitled files with associated path
 
