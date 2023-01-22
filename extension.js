@@ -128,6 +128,10 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 return
             }
             console.error(err)
+            if (err instanceof Error && "code" in err && err.code === "ENOENT" && "path" in err && err.path === "sudo") {
+                await vscode.window.showErrorMessage(`[Save as Root] The extension could not find the sudo command. Install the sudo package using the system's package manager (e.g. apt-get install sudo).`)
+                return
+            }
             await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
         }
     }))
