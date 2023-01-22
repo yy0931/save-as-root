@@ -27,7 +27,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
                 if (p.exitCode === null) {
                     cancel(new Error(`Timeout: ${stderr}`))
                 }
-            }, 5000)
+            }, 60 * 1000)  // #17
         }
         const stopTimer = () => {
             if (timer !== null) { clearTimeout(timer) }
