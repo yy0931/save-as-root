@@ -6,9 +6,9 @@ const os = require("os")
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
     const config = vscode.workspace.getConfiguration("save-as-root")
     return new Promise((resolve, reject) => {
-        // 1. Authenticate with `sudo -S -p 'password:' sh`
-        // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
-        // 3. Write the file contents with `cat <&0 > "$filename"`
+        // 1. Authenticate with `sudo -S -p 'password:' sh`.
+        // 2. Call `echo file contents:` to inform the parent process that the authentication was successful.
+        // 3. Write the file contents with `cat <&0 > "$filename"`.
         const p = execFile(/* "sudo" or "/usr/bin/sudo" */config.get("command", "sudo"), ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
         p.on("error", (err) => {
             stopTimer()
@@ -20,7 +20,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
             reject(err)
         }
 
-        // Set a timeout because the script may wait forever for stdin on error
+        // Set a timeout as the script may wait forever for stdin on error.
         /** @type {NodeJS.Timeout | null} */
         let timer = null
         const startTimer = () => {
@@ -36,12 +36,12 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
         }
         startTimer()
 
-        // Handle stderr
+        // Handle stderr.
         let stderr = ""
         p.stderr?.on("data", (/** @type {Buffer} */chunk) => {
             const lines = chunk.toString().split("\n").map((line) => line.trim())
             if (lines.includes("password:")) {
-                // Password prompt
+                // Show a password prompt.
                 stopTimer()
                 vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "", ignoreFocusOut: true }).then((password) => {
                     if (password === undefined) { return cancel(new vscode.CancellationError()) }
@@ -50,17 +50,17 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
                 }, cancel)
                 stderr = ""
             } else if (lines.includes("file contents:")) {
-                // Authentication succeeded
+                // Write to the file when the authentication is succeeded.
                 p.stdin?.write(content)
                 p.stdin?.end()
                 stderr += lines.slice(lines.lastIndexOf("file contents:") + 1).join("\n")
             } else {
-                // Error messages
+                // Concatenate error messages.
                 stderr += chunk.toString()
             }
         })
 
-        // Exit
+        // Handle the exit event.
         p.on("exit", (code) => {
             stopTimer()
             if (code === 0) {
@@ -74,7 +74,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
     context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
-        // Check the status of the editor
+        // Check the status of the editor.
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
             return
@@ -86,45 +86,45 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
 
         try {
             if (!editor.document.isUntitled) {
-                // Write the editor content to the file
+                // Write the editor content to the file.
                 await sudoWriteFile(editor.document.fileName, editor.document.getText())
 
-                // Reload the file contents from the file system
+                // Reload the file contents from the file system.
                 await vscode.commands.executeCommand("workbench.action.files.revert")
-            } else if (editor.document.uri.fsPath.startsWith("/")) {  // Untitled files with associated path (e.g. `code nonexistent.txt`)
-                // Write the editor content to the file
+            } else if (editor.document.uri.fsPath.startsWith("/")) {  // Untitled files opened with the "code" command (e.g. `code nonexistent.txt`)
+                // Write the editor content to the file.
                 await sudoWriteFile(editor.document.fileName, editor.document.getText())
 
-                // Save the viewColumn property before closing the editor
+                // Save the viewColumn property before closing the editor.
                 const column = editor.viewColumn
 
-                // Close the editor for the untitled file
+                // Close the editor for the untitled file.
                 await vscode.commands.executeCommand("workbench.action.revertAndCloseActiveEditor")
 
-                // Open the newly created file
+                // Open the newly created file.
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(editor.document.uri.fsPath), column)
             } else { // Untitled files with a name such as "Untitled-1"
-                // Show the save dialog
+                // Show the save dialog.
                 const input = await vscode.window.showSaveDialog({})
                 if (input === undefined) {
                     return
                 }
                 const filename = input.fsPath
 
-                // Create a file and write the editor content to it
+                // Create a file and write the editor content to it.
                 await sudoWriteFile(filename, editor.document.getText())
 
-                // Save the viewColumn property before closing the editor
+                // Save the viewColumn property before closing the editor.
                 const column = editor.viewColumn
 
-                // Close the editor for the untitled file
+                // Close the editor for the untitled file.
                 await vscode.commands.executeCommand("workbench.action.revertAndCloseActiveEditor")
 
-                // Open the newly created file
+                // Open the newly created file.
                 await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(filename), column)
             }
         } catch (err) {
-            // Handle errors
+            // Handle errors.
             if (err instanceof vscode.CancellationError) {
                 return
             }
