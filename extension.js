@@ -3,13 +3,13 @@ const { execFile } = require("child_process")
 const os = require("os")
 
 /** @returns {Promise<void>} */
-const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content, /** @type {string} the `sudo --user=user` option  */user) => {
     const config = vscode.workspace.getConfiguration("save-as-root")
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo -S -p 'password:' sh`.
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful.
         // 3. Write the file contents with `cat <&0 > "$filename"`.
-        const p = execFile(/* "sudo" or "/usr/bin/sudo" */config.get("command", "sudo"), ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
+        const p = execFile(/* "sudo" or "/usr/bin/sudo" */config.get("command", "sudo"), [...(user === "root" ? [] : ["-u", user]), "-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
         p.on("error", (err) => {
             stopTimer()
             reject(err)
@@ -73,7 +73,8 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} *
 }
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
-    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async () => {
+    // Register the "Save as Root" command.
+    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFile", async (/** @type {string | undefined} */user = "root") => {
         // Check the status of the editor.
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
@@ -87,13 +88,13 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         try {
             if (!editor.document.isUntitled) {
                 // Write the editor content to the file.
-                await sudoWriteFile(editor.document.fileName, editor.document.getText())
+                await sudoWriteFile(editor.document.fileName, editor.document.getText(), user)
 
                 // Reload the file contents from the file system.
                 await vscode.commands.executeCommand("workbench.action.files.revert")
             } else if (editor.document.uri.fsPath.startsWith("/")) {  // Untitled files opened with the "code" command (e.g. `code nonexistent.txt`)
                 // Write the editor content to the file.
-                await sudoWriteFile(editor.document.fileName, editor.document.getText())
+                await sudoWriteFile(editor.document.fileName, editor.document.getText(), user)
 
                 // Save the viewColumn property before closing the editor.
                 const column = editor.viewColumn
@@ -112,7 +113,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 const filename = input.fsPath
 
                 // Create a file and write the editor content to it.
-                await sudoWriteFile(filename, editor.document.getText())
+                await sudoWriteFile(filename, editor.document.getText(), user)
 
                 // Save the viewColumn property before closing the editor.
                 const column = editor.viewColumn
@@ -139,6 +140,24 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
         }
     }))
+
+    // Register the "Save as Specified User…" command.
+    {
+        // Persist the username input in the input box for the "Save as Specified User…" command until the VSCode's window is closed.
+        let value = ""
+
+        context.subscriptions.push(vscode.commands.registerCommand("save-as-root.saveFileAsSpecifiedUser", async () => {
+            // Show an input box to select a user
+            const user = value = await vscode.window.showInputBox({ value, placeHolder: "username", ignoreFocusOut: true }) || ""
+            if (!user) {
+                await vscode.window.showInformationMessage("Canceled.")
+                return
+            }
+
+            // Redirect to the main command
+            vscode.commands.executeCommand("save-as-root.saveFile", user)
+        }))
+    }
 }
 
 exports.deactivate = () => { }

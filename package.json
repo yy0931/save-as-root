@@ -19,7 +19,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:save-as-root.saveFile"
+		"onCommand:save-as-root.saveFile",
+		"onCommand:save-as-root.saveFileAsSpecifiedUser"
 	],
 	"keywords": [
 		"remote",
@@ -33,6 +34,10 @@
 			{
 				"command": "save-as-root.saveFile",
 				"title": "Save as Root"
+			},
+			{
+				"command": "save-as-root.saveFileAsSpecifiedUser",
+				"title": "Save as Specified User…"
 			}
 		],
 		"configuration": {
