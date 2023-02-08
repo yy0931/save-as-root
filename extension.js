@@ -4,11 +4,12 @@ const os = require("os")
 
 /** @returns {Promise<void>} */
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content) => {
+    const config = vscode.workspace.getConfiguration("save-as-root")
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo -S -p 'password:' sh`
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful
         // 3. Write the file contents with `cat <&0 > "$filename"`
-        const p = execFile("sudo", ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
+        const p = execFile(/* "sudo" or "/usr/bin/sudo" */config.get("command", "sudo"), ["-S", "-p", "password:", `filename=${filename}`, "sh", "-c", 'echo "file contents:" >&2; cat <&0 > "$filename"'])
         p.on("error", (err) => {
             stopTimer()
             reject(err)
@@ -130,6 +131,9 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             console.error(err)
             if (err instanceof Error && "code" in err && err.code === "ENOENT" && "path" in err && err.path === "sudo") {  // #15
                 await vscode.window.showErrorMessage(`[Save as Root] The extension could not find the sudo command. Install the sudo package using the system's package manager (e.g. apt-get install sudo).`)
+                return
+            } else if (err instanceof Error && err.message.includes("NixOS's wrapper.c failed.")) {  // #19
+                await vscode.window.showErrorMessage(`[Save as Root] NixOS's security wrapper prevented the sudo command from running. Try setting the configuration "save-as-root.command" to "/usr/bin/sudo". \nOriginal error:\n${/** @type {Error} */(err).message}`)
                 return
             }
             await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)

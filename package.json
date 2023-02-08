@@ -34,7 +34,15 @@
 				"command": "save-as-root.saveFile",
 				"title": "Save as Root"
 			}
-		]
+		],
+		"configuration": {
+			"properties": {
+				"save-as-root.command": {
+					"type": "string",
+					"default": "sudo"
+				}
+			}
+		}
 	},
 	"capabilities": {
 		"virtualWorkspaces": false,
