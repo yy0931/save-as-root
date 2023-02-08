@@ -1,3 +1,7 @@
+1.6.0
+- Add the configuration option `save-as-root.command` to specify the location of the sudo command #19
+- Add the "Save as Specified User…" command #20
+
 1.5.1
 - Increase timeout #17
 - Display instructions when the sudo command is missing #15
