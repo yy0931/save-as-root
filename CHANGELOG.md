@@ -1,3 +1,6 @@
+1.7.0
+- Updated to ensure that VSCode API commands operate on the intended editor, even if the user switches to a different editor during the save process.
+
 1.6.0
 - Add the configuration option `save-as-root.command` to specify the location of the sudo command #19
 - Add the "Save as Specified User…" command #20
