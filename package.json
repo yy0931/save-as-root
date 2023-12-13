@@ -20,7 +20,8 @@
 	],
 	"activationEvents": [
 		"onCommand:save-as-root.saveFile",
-		"onCommand:save-as-root.saveFileAsSpecifiedUser"
+		"onCommand:save-as-root.saveFileAsSpecifiedUser",
+		"onCommand:save-as-root.newFile"
 	],
 	"keywords": [
 		"remote",
@@ -38,6 +39,10 @@
 			{
 				"command": "save-as-root.saveFileAsSpecifiedUser",
 				"title": "Save as Specified User…"
+			},
+			{
+				"command": "save-as-root.newFile",
+				"title": "New File as Root..."
 			}
 		],
 		"configuration": {
@@ -47,6 +52,15 @@
 					"default": "sudo"
 				}
 			}
+		},
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "save-as-root.newFile",
+					"group": "navigation@9",
+					"when": "resourceScheme == file && explorerResourceIsFolder && remoteName != ''"
+				}
+			]
 		}
 	},
 	"capabilities": {

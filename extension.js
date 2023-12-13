@@ -1,6 +1,7 @@
 const vscode = require("vscode")
 const { execFile } = require("child_process")
 const os = require("os")
+const path = require("path")
 
 /** @returns {Promise<void>} */
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string} */content, /** @type {string} the `sudo --user=user` option  */user) => {
@@ -173,6 +174,24 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             vscode.commands.executeCommand("save-as-root.saveFile", user)
         }))
     }
+
+    // Register the "New File as Root..." command.
+    context.subscriptions.push(vscode.commands.registerCommand("save-as-root.newFile", async (/** @type {vscode.Uri} */uri) => {
+        try {
+            if (uri.scheme !== "file") {
+                await vscode.window.showErrorMessage(`Unsupported uri scheme: ${uri.scheme}`)
+                return
+            }
+            const value = uri.fsPath + path.sep
+            const filepath = await vscode.window.showInputBox({ value, valueSelection: [value.length, value.length] })
+            if (!filepath || filepath.endsWith(path.sep)) {
+                return
+            }
+            await sudoWriteFile(filepath, "", "root")
+        } catch (err) {
+            await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
+        }
+    }))
 }
 
 exports.deactivate = () => { }
