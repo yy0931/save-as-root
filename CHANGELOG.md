@@ -1,3 +1,6 @@
+1.8.0
+- Added the "New File as Root..." context menu item to the explorer.
+
 1.7.0
 - Updated to ensure that VSCode API commands operate on the intended editor, even if the user switches to a different editor during the save process.
 
