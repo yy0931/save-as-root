@@ -18,7 +18,9 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [],
+	"activationEvents": [
+		"onStartupFinished"
+	],
 	"keywords": [
 		"remote",
 		"ssh",
@@ -38,7 +40,8 @@
 			},
 			{
 				"command": "save-as-root.newFile",
-				"title": "New File as Root..."
+				"title": "New File as Root...",
+				"enablement": "sqlite3-editor.activeFeatures.newFileAsRoot"
 			}
 		],
 		"configuration": {
@@ -46,6 +49,15 @@
 				"save-as-root.command": {
 					"type": "string",
 					"default": "sudo"
+				},
+				"save-as-root.optionalFeatures": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": ["new-file-as-root", "open-as-root"]
+					},
+					"default": ["new-file-as-root", "open-as-root"],
+					"markdownDescription": "Changing this setting requires reopening the window to take effect."
 				}
 			}
 		},
@@ -54,7 +66,7 @@
 				{
 					"command": "save-as-root.newFile",
 					"group": "navigation@9",
-					"when": "resourceScheme == file && explorerResourceIsFolder && remoteName != ''"
+					"when": "resourceScheme == file && explorerResourceIsFolder && remoteName != '' && sqlite3-editor.activeFeatures.newFileAsRoot"
 				}
 			]
 		}

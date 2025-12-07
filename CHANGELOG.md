@@ -1,3 +1,7 @@
+TODO:
+- Add a command to open a folder as root
+- Improve error handling; the current implementation won't show an error message when an error is thrown.
+
 1.11.0
 - The extension now saves content using the editor's current encoding. (#32)
 - Increased the minimum required VSCode version from 1.57.0 to 1.100.0 to use the encoding API introduced in VSCode 1.100.0.
