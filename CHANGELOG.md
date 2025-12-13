@@ -1,3 +1,8 @@
+1.12.0
+- Added support for [Run on Save by pucelle](https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save). #35
+- Made the extension's save command fall back to a normal save when saving a document that isn't a local file. #34
+- Made the extension preserve the editor encoding when saving untitled documents.
+
 1.11.0
 - The extension now saves content using the editor's current encoding. (#32)
 - Increased the minimum required VSCode version from 1.57.0 to 1.100.0 to use the encoding API introduced in VSCode 1.100.0.
