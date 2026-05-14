@@ -1,8 +1,8 @@
 {
   "name": "sudo-remote-ssh",
-  "displayName": "Sudo in Remote - SSH",
-  "description": "Edit configuration files with root privileges while using VS Code Remote - SSH.",
-  "version": "1.0.1",
+  "displayName": "Sudo Remote - SSH",
+  "description": "Edit configuration files with root privileges while using VS Code Remote - SSH extension.",
+  "version": "1.0.2",
   "publisher": "rezbouchabou",
   "license": "MIT",
   "engines": {
@@ -29,11 +29,7 @@
     "linux"
   ],
   "main": "./extension.js",
-  "activationEvents": [
-    "onCommand:sudo-remote-ssh.saveFile",
-    "onCommand:sudo-remote-ssh.saveFileAsSpecifiedUser",
-    "onCommand:sudo-remote-ssh.newFile"
-  ],
+  "activationEvents": [],
   "contributes": {
     "commands": [
       {
