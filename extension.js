@@ -1,8 +1,8 @@
 /**
  * @file Provides the following commands to VSCode:
- * - save-as-root-remote-ssh.saveFile(user: string = "root"): Saves the current file with root privileges or as the specified user
- * - save-as-root-remote-ssh.saveFileAsSpecifiedUser(): Prompts for a username and saves the current file as that user
- * - save-as-root-remote-ssh.newFile(uri?: vscode.Uri): Creates a new file with root privileges at the optional URI path
+ * - sudo-remote-ssh.saveFile(user: string = "root"): Saves the current file with root privileges or as the specified user
+ * - sudo-remote-ssh.saveFileAsSpecifiedUser(): Prompts for a username and saves the current file as that user
+ * - sudo-remote-ssh.newFile(uri?: vscode.Uri): Creates a new file with root privileges at the optional URI path
  * 
  * Notes:
  * - This script is intentionally written in JavaScript instead of TypeScript, as it's a small single-file script.
@@ -17,7 +17,7 @@ const path = require("path")
 
 /** @returns {Promise<void>} */
 const sudoWriteFile = async (/** @type {string} */filename, /** @type {string | Uint8Array} */content, /** @type {string} the `sudo --user=user` option  */user) => {
-    const config = vscode.workspace.getConfiguration("save-as-root-remote-ssh")
+    const config = vscode.workspace.getConfiguration("sudo-remote-ssh")
     return new Promise((resolve, reject) => {
         // 1. Authenticate with `sudo -S -p 'password:' sh`.
         // 2. Call `echo file contents:` to inform the parent process that the authentication was successful.
@@ -94,12 +94,12 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string | 
 
 /**
  * Calls the 'on save' API (the return value of activate()) of pucelle's "Run on Save", or any other extension with a compatible API. #35
- * We assume the extensions specified in the configuration "save-as-root-remote-ssh.extensionsToNotifyOnSave" implement {@link SaveEventsAPI}.
+ * We assume the extensions specified in the configuration "sudo-remote-ssh.extensionsToNotifyOnSave" implement {@link SaveEventsAPI}.
  */
 const notifyToOtherExtensions = async (/** @type {"willSave" | "didSave"} */eventName, /** @type {vscode.TextDocument} */document) => {
     for (const extensionId of
         // Get the list of extensions to notify from the configuration.
-        vscode.workspace.getConfiguration("save-as-root-remote-ssh").get("extensionsToNotifyOnSave", /** @type {string[]} */([]))
+        vscode.workspace.getConfiguration("sudo-remote-ssh").get("extensionsToNotifyOnSave", /** @type {string[]} */([]))
     ) {
         // Get the extension, skipping if the extension is not installed.
         const extension = vscode.extensions.getExtension(extensionId)
@@ -131,7 +131,7 @@ const notifyToOtherExtensions = async (/** @type {"willSave" | "didSave"} */even
 
 exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
     // Register the "Save as Root" command.
-    context.subscriptions.push(vscode.commands.registerCommand("save-as-root-remote-ssh.saveFile", async (/** @type {string | undefined} */user = "root") => {
+    context.subscriptions.push(vscode.commands.registerCommand("sudo-remote-ssh.saveFile", async (/** @type {string | undefined} */user = "root") => {
         // Check the status of the editor.
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) {
@@ -216,7 +216,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
                 await vscode.window.showErrorMessage(`[Save as Root] The extension could not find the sudo command. Install the sudo package using the system's package manager (e.g. apt-get install sudo).`)
                 return
             } else if (err instanceof Error && err.message.includes("NixOS's wrapper.c failed.")) {  // #19
-                await vscode.window.showErrorMessage(`[Save as Root] NixOS's security wrapper prevented the sudo command from running. Try setting the configuration "save-as-root-remote-ssh.command" to "/usr/bin/sudo". \nOriginal error:\n${/** @type {Error} */(err).message}`)
+                await vscode.window.showErrorMessage(`[Save as Root] NixOS's security wrapper prevented the sudo command from running. Try setting the configuration "sudo-remote-ssh.command" to "/usr/bin/sudo". \nOriginal error:\n${/** @type {Error} */(err).message}`)
                 return
             }
             await vscode.window.showErrorMessage(`[Save as Root] ${/** @type {Error} */(err).message}`)
@@ -228,7 +228,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         // Persist the username input in the input box for the "Save as Specified User…" command until the VSCode's window is closed.
         let value = ""
 
-        context.subscriptions.push(vscode.commands.registerCommand("save-as-root-remote-ssh.saveFileAsSpecifiedUser", async () => {
+        context.subscriptions.push(vscode.commands.registerCommand("sudo-remote-ssh.saveFileAsSpecifiedUser", async () => {
             // Show an input box to select a user
             const user = value = await vscode.window.showInputBox({ value, placeHolder: "username", ignoreFocusOut: true }) || ""
             if (!user) {
@@ -237,12 +237,12 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             }
 
             // Redirect to the main command
-            vscode.commands.executeCommand("save-as-root-remote-ssh.saveFile", user)
+            vscode.commands.executeCommand("sudo-remote-ssh.saveFile", user)
         }))
     }
 
     // Register the "New File as Root..." command.
-    context.subscriptions.push(vscode.commands.registerCommand("save-as-root-remote-ssh.newFile", async (/** @type {vscode.Uri | undefined} */uri) => {
+    context.subscriptions.push(vscode.commands.registerCommand("sudo-remote-ssh.newFile", async (/** @type {vscode.Uri | undefined} */uri) => {
         try {
             /** @type {{ encoding: string } | undefined} */
             let encodingOptions

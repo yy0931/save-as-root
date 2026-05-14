@@ -1,4 +1,4 @@
-# Save as Root in Remote - SSH
+# Sudo Remote - SSH
 This extension saves files with root privileges on Linux or macOS environments connected with `Remote - SSH` extension.
 
 ## Usage

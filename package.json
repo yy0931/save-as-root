@@ -1,6 +1,6 @@
 {
-  "name": "save-as-root-remote-ssh",
-  "displayName": "Save as Root (sudo) in Remote - SSH",
+  "name": "sudo-remote-ssh",
+  "displayName": "Sudo in Remote - SSH",
   "description": "Edit configuration files with root privileges while using VS Code Remote - SSH.",
   "version": "1.0.0",
   "publisher": "rezbouchabou",
@@ -30,34 +30,34 @@
   ],
   "main": "./extension.js",
   "activationEvents": [
-    "onCommand:save-as-root-remote-ssh.saveFile",
-    "onCommand:save-as-root-remote-ssh.saveFileAsSpecifiedUser",
-    "onCommand:save-as-root-remote-ssh.newFile"
+    "onCommand:sudo-remote-ssh.saveFile",
+    "onCommand:sudo-remote-ssh.saveFileAsSpecifiedUser",
+    "onCommand:sudo-remote-ssh.newFile"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "save-as-root-remote-ssh.saveFile",
+        "command": "sudo-remote-ssh.saveFile",
         "title": "Save as Root"
       },
       {
-        "command": "save-as-root-remote-ssh.saveFileAsSpecifiedUser",
+        "command": "sudo-remote-ssh.saveFileAsSpecifiedUser",
         "title": "Save as Specified User..."
       },
       {
-        "command": "save-as-root-remote-ssh.newFile",
+        "command": "sudo-remote-ssh.newFile",
         "title": "New File as Root..."
       }
     ],
     "configuration": {
       "title": "Save as Root",
       "properties": {
-        "save-as-root-remote-ssh.command": {
+        "sudo-remote-ssh.command": {
           "type": "string",
           "default": "sudo",
           "description": "Command used to elevate privileges."
         },
-        "save-as-root-remote-ssh.extensionsToNotifyOnSave": {
+        "sudo-remote-ssh.extensionsToNotifyOnSave": {
           "type": "array",
           "items": {
             "type": "string"
@@ -72,7 +72,7 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "save-as-root-remote-ssh.newFile",
+          "command": "sudo-remote-ssh.newFile",
           "group": "navigation@9",
           "when": "resourceScheme == file && explorerResourceIsFolder && remoteName != ''"
         }
@@ -84,7 +84,7 @@
     "untrustedWorkspaces": {
       "supported": "limited",
       "restrictedConfigurations": [
-        "save-as-root-remote-ssh.command"
+        "sudo-remote-ssh.command"
       ]
     }
   }
