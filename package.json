@@ -1,79 +1,91 @@
 {
-	"name": "save-as-root",
-	"displayName": "Save as Root in Remote - SSH",
-	"description": "Edit configuration files with root privileges while using the Remote - SSH extension",
-	"version": "1.0.0",
-	"publisher": "rezbouchabou",
-	"engines": {
-		"vscode": "^1.100.0"
-	},
-	"repository": {
-		"url": "https://github.com/rezbouchabou/save-as-root",
-		"type": "git"
-	},
-	"bugs": {
-		"url": "https://github.com/rezbouchabou/save-as-root/issues"
-	},
-	"icon": "icon.png",
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [],
-	"keywords": [
-		"remote",
-		"ssh",
-		"root",
-		"sudo"
-	],
-	"main": "./extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "save-as-root.saveFile",
-				"title": "Save as Root"
-			},
-			{
-				"command": "save-as-root.saveFileAsSpecifiedUser",
-				"title": "Save as Specified User..."
-			},
-			{
-				"command": "save-as-root.newFile",
-				"title": "New File as Root..."
-			}
-		],
-		"configuration": {
-			"properties": {
-				"save-as-root.command": {
-					"type": "string",
-					"default": "sudo"
-				},
-				"save-as-root.extensionsToNotifyOnSave": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					},
-					"default": ["pucelle.run-on-save"],
-					"markdownDescription": "A list of extension IDs to notify when a file is saved using the Save as Root extension. Only extensions that support save notifications from the Save as Root extension should be added."
-				}
-			}
-		},
-		"menus": {
-			"explorer/context": [
-				{
-					"command": "save-as-root.newFile",
-					"group": "navigation@9",
-					"when": "resourceScheme == file && explorerResourceIsFolder && remoteName != ''"
-				}
-			]
-		}
-	},
-	"capabilities": {
-		"virtualWorkspaces": false,
-		"untrustedWorkspaces": {
-			"supported": "limited",
-			"restrictedConfigurations": [
-				"save-as-root.command"
-			]
-		}
-	}
+  "name": "save-as-root",
+  "displayName": "Save as Root in Remote - SSH",
+  "description": "Edit configuration files with root privileges while using VS Code Remote - SSH.",
+  "version": "1.0.0",
+  "publisher": "rezbouchabou",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rezbouchabou/save-as-root"
+  },
+  "bugs": {
+    "url": "https://github.com/rezbouchabou/save-as-root/issues"
+  },
+  "homepage": "https://github.com/rezbouchabou/save-as-root",
+  "icon": "icon.png",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "remote",
+    "ssh",
+    "root",
+    "sudo",
+    "remote-ssh",
+    "linux"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:save-as-root.saveFile",
+    "onCommand:save-as-root.saveFileAsSpecifiedUser",
+    "onCommand:save-as-root.newFile"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "save-as-root.saveFile",
+        "title": "Save as Root"
+      },
+      {
+        "command": "save-as-root.saveFileAsSpecifiedUser",
+        "title": "Save as Specified User..."
+      },
+      {
+        "command": "save-as-root.newFile",
+        "title": "New File as Root..."
+      }
+    ],
+    "configuration": {
+      "title": "Save as Root",
+      "properties": {
+        "save-as-root.command": {
+          "type": "string",
+          "default": "sudo",
+          "description": "Command used to elevate privileges."
+        },
+        "save-as-root.extensionsToNotifyOnSave": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "pucelle.run-on-save"
+          ],
+          "markdownDescription": "List of extension IDs to notify after saving."
+        }
+      }
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "save-as-root.newFile",
+          "group": "navigation@9",
+          "when": "resourceScheme == file && explorerResourceIsFolder && remoteName != ''"
+        }
+      ]
+    }
+  },
+  "capabilities": {
+    "virtualWorkspaces": false,
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "restrictedConfigurations": [
+        "save-as-root.command"
+      ]
+    }
+  }
 }
