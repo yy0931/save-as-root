@@ -9,4 +9,4 @@ Alternatively, you can use `Save as Specified User...` command to save as a non-
 This extension also adds the `New File as Root...` option to the explorer's context menu when the window is connected to a remote folder.
 
 ## Note
-Forked from yy0931/save-as-root 1.11.0
+Forked from yy0931/save-as-root 1.12.0
