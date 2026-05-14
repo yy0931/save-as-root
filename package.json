@@ -21,11 +21,11 @@
     "Other"
   ],
   "keywords": [
+    "remote-ssh",
     "remote",
     "ssh",
     "root",
     "sudo",
-    "remote-ssh",
     "linux"
   ],
   "main": "./extension.js",
