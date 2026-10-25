@@ -52,8 +52,9 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string | 
         // Handle stderr.
         let stderr = ""
         p.stderr?.on("data", (/** @type {Buffer} */chunk) => {
-            const lines = chunk.toString().split("\n").map((line) => line.trim())
-            if (lines.includes("password:")) {
+            const chunkStr = chunk.toString()
+            const lines = chunkStr.split("\n").map((line) => line.trim())
+            if (chunkStr.includes("password:")) {  // classic sudo prints "password:", while sudo-rs prints "[sudo: password:]" (#38)
                 // Show a password prompt.
                 stopTimer()
                 vscode.window.showInputBox({ password: true, title: "Save as Root", placeHolder: `password for ${os.userInfo().username}`, prompt: stderr !== "" ? `\n${stderr}` : "", ignoreFocusOut: true }).then((password) => {
@@ -69,7 +70,7 @@ const sudoWriteFile = async (/** @type {string} */filename, /** @type {string | 
                 stderr += lines.slice(lines.lastIndexOf("file contents:") + 1).join("\n")
             } else {
                 // Concatenate error messages.
-                stderr += chunk.toString()
+                stderr += chunkStr
             }
         })
 

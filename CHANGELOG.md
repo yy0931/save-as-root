@@ -1,3 +1,6 @@
+1.13.0
+- Fixed 'Password prompt never appears with sudo-rs (default sudo on Ubuntu 25.10+)' #38
+
 1.12.0
 - Added support for [Run on Save by pucelle](https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save). #35
 - Made the extension's save command fall back to a normal save when saving a document that isn't a local file. #34
