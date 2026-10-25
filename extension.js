@@ -7,7 +7,7 @@
  * Notes:
  * - This script is intentionally written in JavaScript instead of TypeScript, as it's a small single-file script.
  *   I will not accept PRs converting this project to TypeScript.
- * - Feel free to fork this project, but do **not** remove the LICENSE file, as was done in this fork: https://github.com/FriedrichVoelker/vscode-root-on-remote/issues/2
+ * - Feel free to fork this project, but do **not** remove the LICENSE file.
  */
 
 const vscode = require("vscode")
